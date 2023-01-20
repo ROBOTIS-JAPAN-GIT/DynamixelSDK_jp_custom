@@ -10,6 +10,16 @@
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_file_address)" required="true" /> 
 
   <param name="robot_description" command="$(find xacro)xacro $(find dynamixel_description)/urdf/test_$(arg model)_servo.urdf.xacro" />
+  
+   <!--コントローラ作成-->
+   <rosparam>
+    dynx_controller:      
+       type: position_controllers/JointTrajectoryController
+       joints: 
+         - base_joint
+         - hone_joint
+   </rosparam>
+   <node name = "controller_spawner" pkg = "controller_manager" type = "spawner" args = "dynx_controller"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="paused"       value="false"/>
@@ -22,3 +32,6 @@
   <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" args="-urdf -model $(arg model) -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
 
 </launch>
+
+<!-- デバッグ用コマンドメモ -->
+<!-- rostopic pub /dynx_controller/command trajectory_msgs/JointTrajectory '{joint_names: ["base_joint", "hone_joint"], points: [{positions: [0.1, -1.5], time_from_start: [1, 0]}]}' -1 -->
