@@ -36,9 +36,18 @@
 			</xacro:unless>
 		</joint>
 
-		<link name="dynx_2XL430_hone_yaw" />
+		<link name="dynx_2XL430_hone_yaw">
+			<inertial>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<mass value="0.00001" />
+			<inertia
+				ixx="0.00001" ixy="0.0" ixz="0.0"
+				iyy="0.00001" iyz="0.0"
+				izz="0.00001" />
+			</inertial>
+		</link>
 
-		<joint name="${parent}_joint" type="fixed">
+		<joint name="${parent}_joint" type="continuous">
 			<parent link="dynx_2XL430_hone_yaw"/>
 			<child link="dynx_2XL430"/>
 			<origin xyz="${L_x_yaw} ${L_y_yaw} ${L_z_yaw}" rpy="${pi} 0 0"/>
@@ -71,7 +80,7 @@
 			</collision>
 		</link>
 
-		<joint name="${child}_joint" type="fixed">
+		<joint name="${child}_joint" type="continuous">
 			<parent link="dynx_2XL430"/>
 			<child link="dynx_2XL430_hone_pitch"/>
 			<origin xyz="${L_x_pitch} ${L_y_pitch} ${L_z_pitch}" rpy="0 ${pi/2} 0"/>
@@ -80,7 +89,16 @@
 			<limit velocity="${no_load_speed}" effort="${stall_torque}" /> 
 		</joint>
 
-		<link name="dynx_2XL430_hone_pitch" />
+		<link name="dynx_2XL430_hone_pitch">
+			<inertial>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<mass value="0.00001" />
+			<inertia
+				ixx="0.00001" ixy="0.0" ixz="0.0"
+				iyy="0.00001" iyz="0.0"
+				izz="0.00001" />
+			</inertial>
+		</link>
 
 		<joint name="2XL430_pitch_joint_" type="fixed">
 			<parent link="dynx_2XL430_hone_pitch"/>
