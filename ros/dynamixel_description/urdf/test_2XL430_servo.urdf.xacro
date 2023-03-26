@@ -56,5 +56,10 @@
 	<gazebo reference="hone">
 		<material>Gazebo/Red</material>
 	</gazebo>
-
+    
+    <!--ros_controlプラグインをロード-->
+    <gazebo>
+        <plugin name="control" filename="libgazebo_ros_control.so">
+        </plugin>
+    </gazebo>
 </robot>

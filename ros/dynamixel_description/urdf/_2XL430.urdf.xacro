@@ -51,7 +51,7 @@
 			<parent link="dynx_2XL430_hone_yaw"/>
 			<child link="dynx_2XL430"/>
 			<origin xyz="${L_x_yaw} ${L_y_yaw} ${L_z_yaw}" rpy="${pi} 0 0"/>
-			<axis xyz="0 0 1"/>
+			<axis xyz="0 0 -1"/>
 			<dynamics damping="0.1"/>  
 			<limit velocity="${no_load_speed}" effort="${stall_torque}" /> 
 		</joint>
@@ -83,7 +83,7 @@
 		<joint name="${child}_joint" type="continuous">
 			<parent link="dynx_2XL430"/>
 			<child link="dynx_2XL430_hone_pitch"/>
-			<origin xyz="${L_x_pitch} ${L_y_pitch} ${L_z_pitch}" rpy="0 ${pi/2} 0"/>
+			<origin xyz="${L_x_pitch} ${L_y_pitch} ${L_z_pitch}" rpy="${0} ${pi/2} ${0}"/>
 			<axis xyz="0 0 1"/>
 			<dynamics damping="0.1"/>  
 			<limit velocity="${no_load_speed}" effort="${stall_torque}" /> 
