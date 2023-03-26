@@ -13,7 +13,7 @@
 		</visual>
 	</link>
 
-	<xacro:servo_2XL430 parent="base" center_parent="false" child="hone" center_child="true" />
+	<xacro:servo_2XL430 parent="base" center_parent="true" child="hone" center_child="true" />
 
 	<link name="hone">
 		<visual>

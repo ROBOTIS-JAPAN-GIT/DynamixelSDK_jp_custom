@@ -9,7 +9,7 @@
 		<xacro:property name="L_x_yaw" value="${ 0/1000}" /> <!-- unit [m] --> <!-- converted from [mm] -->
 		<xacro:property name="L_y_yaw" value="${12/1000}" /> <!-- unit [m] --> <!-- converted from [mm] -->
 		<xacro:property name="L_z_yaw" value="${19/1000}" /> <!-- unit [m] --> <!-- converted from [mm] -->
-		<xacro:property name="L_x_pitch" value="${ L_z_yaw}" /> <!-- unit [m] -->
+		<xacro:property name="L_x_pitch" value="${-L_z_yaw}" /> <!-- unit [m] -->
 		<xacro:property name="L_y_pitch" value="${-L_y_yaw}" /> <!-- unit [m] -->
 		<xacro:property name="L_z_pitch" value="${ L_x_yaw}" /> <!-- unit [m] -->
 		<xacro:property name="W_x" value="${36/1000}" /> <!-- unit [m] --> <!-- converted from [mm] -->
@@ -50,20 +50,19 @@
 		<joint name="${parent}_joint" type="continuous">
 			<parent link="dynx_2XL430_hone_yaw"/>
 			<child link="dynx_2XL430"/>
-			<origin xyz="${L_x_yaw} ${L_y_yaw} ${L_z_yaw}" rpy="${pi} 0 0"/>
-			<axis xyz="0 0 -1"/>
+			<axis xyz="0 0 1"/>
 			<dynamics damping="0.1"/>  
 			<limit velocity="${no_load_speed}" effort="${stall_torque}" /> 
 		</joint>
 
 		<link name="dynx_2XL430">
 			<inertial>
-				<origin xyz="0 0 0" rpy="0 0 0"/>
+			    <origin xyz="${L_x_yaw} ${L_y_yaw} ${L_z_yaw}" rpy="${pi} 0 0"/>
 				<mass value="${mass}"/>
 				<xacro:insert_block name="inertia"/>
 			</inertial>
 			<visual>
-				<xacro:insert_block name="visual_origin"/>
+                <origin xyz="${L_x_yaw} ${L_y_yaw} ${L_z_yaw}" rpy="${pi} 0 0"/>
 				<geometry>
 					<mesh filename="package://dynamixel_description/${path_to_mesh}" />
 				</geometry>
@@ -72,7 +71,7 @@
 				</material>
 			</visual>
 			<collision>
-				<origin xyz="0 0 0" rpy="0 0 0"/>
+			    <origin xyz="${L_x_yaw} ${L_y_yaw} ${L_z_yaw}" rpy="${pi} 0 0"/>
 				<geometry>
 					<box size="${W_x} ${W_y} ${W_z}"/>
 					<!-- <mesh filename="package://dynamixel_description/${path_to_mesh}" /> -->
@@ -83,8 +82,8 @@
 		<joint name="${child}_joint" type="continuous">
 			<parent link="dynx_2XL430"/>
 			<child link="dynx_2XL430_hone_pitch"/>
-			<origin xyz="${L_x_pitch} ${L_y_pitch} ${L_z_pitch}" rpy="${0} ${pi/2} ${0}"/>
-			<axis xyz="0 0 1"/>
+			<origin xyz="${L_x_yaw-L_x_pitch} ${L_y_yaw-L_y_pitch} ${L_z_yaw-L_z_pitch}" rpy="${pi} 0 0"/>
+			<axis xyz="1 0 0"/>
 			<dynamics damping="0.1"/>  
 			<limit velocity="${no_load_speed}" effort="${stall_torque}" /> 
 		</joint>
@@ -104,10 +103,10 @@
 			<parent link="dynx_2XL430_hone_pitch"/>
 			<child link="${child}"/>
 			<xacro:if value="${center_child}">
-				<origin xyz="0 0 ${-L_x_pitch}" rpy="0 0 0"/>
+				<origin xyz="${L_x_pitch} 0 0" rpy="0 ${pi/2} 0"/>
 			</xacro:if>
 			<xacro:unless value="${center_child}">
-				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
 			</xacro:unless>
 		</joint>
 
