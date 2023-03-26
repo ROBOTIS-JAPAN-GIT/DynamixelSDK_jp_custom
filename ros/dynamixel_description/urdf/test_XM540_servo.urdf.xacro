@@ -7,13 +7,13 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"/>
 			<geometry>
-				<cylinder length="0.001" radius="0.01"/>
+				<box size="0.05 0.08 0.001"/>
 			</geometry>
 			<material name="orange"/>
 		</visual>
 	</link>
 
-	<xacro:servo_XM540 parent="base" child="hone" center_child="false" />
+	<xacro:servo_XM540 parent="base" child="hone" center_child="true" fixed_plane="back"/>
 
 	<link name="hone">
 		<visual>
@@ -32,5 +32,11 @@
 	<gazebo reference="hone">
 		<material>Gazebo/Red</material>
 	</gazebo>
+
+    <!--ros_controlプラグインをロード-->
+    <gazebo>
+        <plugin name="control" filename="libgazebo_ros_control.so">
+        </plugin>
+    </gazebo>
 
 </robot>
