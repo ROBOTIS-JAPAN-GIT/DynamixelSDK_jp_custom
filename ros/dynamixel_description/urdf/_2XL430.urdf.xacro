@@ -1,8 +1,23 @@
 <?xml version="1.0"?>
 <!-- あとでdynamixel descriptionを作ってそこにれる -->
 <robot name=" dynamixel-2XL430" xmlns:xacro="http://ros.org/wiki/xacro">\
-	<xacro:macro name="servo_2XL430" params="parent child center_parent:=false center_child:=false">
-	   <xacro:include filename="$(find dynamixel_description)/urdf/_2XL430.gazebo.xacro"/>
+	<xacro:macro name="servo_2XL430" params="name_parent:='__default__' parent name_child:='__default__' child center_parent:=false center_child:=false">
+     
+        <xacro:if value="${name_parent == '__default__'}">
+		    <xacro:property name="parent_joint_name" value="${parent}" />
+        </xacro:if>
+        <xacro:unless value="${name_parent == '__default__'}">
+		    <xacro:property name="parent_joint_name" value="${name_parent}" />
+        </xacro:unless>
+
+        <xacro:if value="${name_child == '__default__'}">
+		    <xacro:property name="child_joint_name" value="${child}" />
+        </xacro:if>
+        <xacro:unless value="${name_child == '__default__'}">
+		    <xacro:property name="child_joint_name" value="${name_child}" />
+        </xacro:unless>
+
+        <xacro:include filename="$(find dynamixel_description)/urdf/_2XL430.gazebo.xacro"/>
 
 		<xacro:property name="path_to_mesh" value="meshes/2XL430-W250-T.stl" />
 		<xacro:property name="visual_origin"> <origin xyz="${0} ${0} ${0}" rpy="${0} ${0} ${0}" /> </xacro:property>
@@ -25,9 +40,9 @@
 		</xacro:property> <!--todo, this is not correct-->
 
 
-		<joint name="2XL430_yaw_joint_" type="fixed">
+		<joint name="${parent_joint_name}_2XL430_yaw_fixed_" type="fixed">
 			<parent link="${parent}"/>
-			<child link="dynx_2XL430_hone_yaw"/>
+			<child link="${parent_joint_name}_dynx_2XL430_hone_yaw"/>
 			<xacro:if value="${center_parent}">
 				<origin xyz="0 0 ${-L_z_yaw}" rpy="0 0 0"/>
 			</xacro:if>
@@ -36,26 +51,26 @@
 			</xacro:unless>
 		</joint>
 
-		<link name="dynx_2XL430_hone_yaw">
+		<link name="${parent_joint_name}_dynx_2XL430_hone_yaw">
 			<inertial>
-			<origin xyz="0 0 0" rpy="0 0 0" />
-			<mass value="0.00001" />
-			<inertia
-				ixx="0.00001" ixy="0.0" ixz="0.0"
-				iyy="0.00001" iyz="0.0"
-				izz="0.00001" />
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<mass value="0.00001" />
+				<inertia
+					ixx="0.00001" ixy="0.0" ixz="0.0"
+					iyy="0.00001" iyz="0.0"
+					izz="0.00001" />
 			</inertial>
 		</link>
 
-		<joint name="${parent}_joint" type="continuous">
-			<parent link="dynx_2XL430_hone_yaw"/>
-			<child link="dynx_2XL430"/>
+		<joint name="${parent_joint_name}_joint" type="continuous">
+			<parent link="${parent_joint_name}_dynx_2XL430_hone_yaw"/>
+			<child link="${parent_joint_name}_${child_joint_name}_dynx_2XL430"/>
 			<axis xyz="0 0 1"/>
 			<dynamics damping="0.1"/>  
 			<limit velocity="${no_load_speed}" effort="${stall_torque}" /> 
 		</joint>
 
-		<link name="dynx_2XL430">
+		<link name="${parent_joint_name}_${child_joint_name}_dynx_2XL430">
 			<inertial>
 			    <origin xyz="${L_x_yaw} ${L_y_yaw} ${L_z_yaw}" rpy="${pi} 0 0"/>
 				<mass value="${mass}"/>
@@ -71,7 +86,7 @@
 				</material>
 			</visual>
 			<collision>
-			    <origin xyz="${L_x_yaw} ${L_y_yaw} ${L_z_yaw}" rpy="${pi} 0 0"/>
+			   <origin xyz="${L_x_yaw} ${L_y_yaw} ${L_z_yaw}" rpy="${pi} 0 0"/>
 				<geometry>
 					<box size="${W_x} ${W_y} ${W_z}"/>
 					<!-- <mesh filename="package://dynamixel_description/${path_to_mesh}" /> -->
@@ -79,16 +94,16 @@
 			</collision>
 		</link>
 
-		<joint name="${child}_joint" type="continuous">
-			<parent link="dynx_2XL430"/>
-			<child link="dynx_2XL430_hone_pitch"/>
+		<joint name="${child_joint_name}_joint" type="continuous">
+			<parent link="${parent_joint_name}_${child_joint_name}_dynx_2XL430"/>
+			<child link="${child_joint_name}_dynx_2XL430_hone_pitch"/>
 			<origin xyz="${L_x_yaw-L_x_pitch} ${L_y_yaw-L_y_pitch} ${L_z_yaw-L_z_pitch}" rpy="${pi} 0 0"/>
 			<axis xyz="1 0 0"/>
 			<dynamics damping="0.1"/>  
 			<limit velocity="${no_load_speed}" effort="${stall_torque}" /> 
 		</joint>
 
-		<link name="dynx_2XL430_hone_pitch">
+		<link name="${child_joint_name}_dynx_2XL430_hone_pitch">
 			<inertial>
 			<origin xyz="0 0 0" rpy="0 0 0" />
 			<mass value="0.00001" />
@@ -99,8 +114,8 @@
 			</inertial>
 		</link>
 
-		<joint name="2XL430_pitch_joint_" type="fixed">
-			<parent link="dynx_2XL430_hone_pitch"/>
+		<joint name="${child_joint_name}_2XL430_pitch_fixed_" type="fixed">
+			<parent link="${child_joint_name}_dynx_2XL430_hone_pitch"/>
 			<child link="${child}"/>
 			<xacro:if value="${center_child}">
 				<origin xyz="${L_x_pitch} 0 0" rpy="0 ${pi/2} 0"/>

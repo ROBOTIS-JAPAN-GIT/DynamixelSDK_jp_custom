@@ -1,8 +1,21 @@
 <?xml version="1.0"?>
 <!-- あとでdynamixel descriptionを作ってそこにれる -->
-<robot name=" dynamixel-2XC430" xmlns:xacro="http://ros.org/wiki/xacro">\
-	<!--あとでgazebo.xacroに入れる-->
-	<gazebo reference="dynx_2XC430">
+<robot name="dynamixel-2XC430" xmlns:xacro="http://ros.org/wiki/xacro">\
+
+	<!-- Transmission macro -->
+	<xacro:macro name="SimpleTransmissionPosition" params="joint motor">
+		<transmission name="tran_${joint}">
+			<type>transmission_interface/SimpleTransmission</type>
+			<joint name="${joint}">
+			    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+			</joint>
+			<actuator name="${motor}">
+			    <mechanicalReduction>1</mechanicalReduction>
+			</actuator>
+		</transmission>
+	</xacro:macro>
+
+	<gazebo reference="${parent_joint_name}_${child_joint_name}_dynx_2XC430">
 		<mu1>0.1</mu1>
 		<mu2>0.1</mu2>
 		<kp>500000.0</kp>
@@ -12,5 +25,17 @@
 		<fdir1>1 0 0</fdir1>
 		<material>Gazebo/Gray</material>
 	</gazebo>
+	
+	<xacro:SimpleTransmissionPosition motor="${parent_joint_name}_dynx_motor1" joint="${parent_joint_name}_joint" />
 
+	<xacro:SimpleTransmissionPosition motor="${child_joint_name}_dynx_motor2" joint="${child_joint_name}_joint" />
+
+    <!--ros_controlプラグインをロード-->
+
+    <gazebo>
+      <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
+         <jointName>${parent_joint_name}_joint, ${child_joint_name}_joint</jointName>
+      </plugin>
+    </gazebo>
+	 
 </robot>
